@@ -18,8 +18,10 @@ ostream& operator<<(ostream& os, const vector<T>& v)
     return os;
 }
 
-void lcs( char *X, char *Y, int m, int n )
+template <class T>
+void lcs( std::vector<T> X, std::vector<T> Y, int m, int n )
 {
+
    int L[m+1][n+1];
 
    /* Following steps build L[m+1][n+1] in bottom up fashion. Note
@@ -43,8 +45,8 @@ void lcs( char *X, char *Y, int m, int n )
    int index = L[m][n];
 
    // Create a character array to store the lcs string
-   char lcs[index+1];
-   lcs[index] = '\0'; // Set the terminating character
+   vector<T> lcs;;
+   // lcs[index] = '\0'; // Set the terminating character
 
    // Start from the right-most-bottom-most corner and
    // one by one store characters in lcs[]
@@ -64,7 +66,7 @@ void lcs( char *X, char *Y, int m, int n )
             ptch.push_back(+(lj-j));
           }
 
-          lcs[index-1] = X[i-1]; // Put current character in result
+          lcs.push_back(X[i-1]); // Put current character in result
           ptch.push_back(0);
           i--; j--; index--;     // reduce values of i, j and index
           li=i; lj=j;
@@ -88,10 +90,12 @@ void lcs( char *X, char *Y, int m, int n )
 /* Driver program to test above function */
 int main()
 {
-  char X[] = "AGGTAB";
-  char Y[] = "GXTXAYB";
-  int m = strlen(X);
-  int n = strlen(Y);
-  lcs(X, Y, m, n);
+  std::string  x = "AGGTAB";
+  std::string y= "GXTXAYB";
+  std::vector<char> X(x.begin(), x.end());
+  std::vector<char> Y(y.begin(), y.end());
+  int m = x.length();
+  int n = y.length();
+  lcs<char>(X, Y, m, n);
   return 0;
 }
