@@ -1,0 +1,6 @@
+cmake_minimum_required (VERSION 2.6)
+project (Diff)
+add_executable(Diff diff.cpp)
+FIND_PACKAGE(Boost COMPONENTS program_options REQUIRED)
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+TARGET_LINK_LIBRARIES(Diff ${Boost_LIBRARIES})
