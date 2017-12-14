@@ -86,21 +86,9 @@ void lcs( std::vector<T> X, std::vector<T> Y )
    if(lj > 0) ptch.push_back(lj);
 
    // Print the lcs
-   cout << "LCS of " << X << " and " << Y << " is " << lcs << '\n';
-   cout << ptch << '\n';
+   cout << "LCS " << lcs << '\n';
+   cout << "patch" << ptch << '\n';
 }
-
-/* Driver program to test above function */
-// int main()
-// {
-//   std::string  x = "AGGTAB";
-//   std::string y= "GXTXAYB";
-//   std::vector<char> X(x.begin(), x.end());
-//   std::vector<char> Y(y.begin(), y.end());
-//   // ifstream file("file.txt");
-//   lcs<char>(X, Y);
-//   return 0;
-// }
 
 int main()
 {
