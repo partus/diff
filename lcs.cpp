@@ -1,5 +1,6 @@
 /* Dynamic Programming implementation of LCS problem */
 #include<iostream>
+#include<fstream>
 #include<cstring>
 #include<cstdlib>
 using namespace std;
@@ -19,8 +20,10 @@ ostream& operator<<(ostream& os, const vector<T>& v)
 }
 
 template <class T>
-void lcs( std::vector<T> X, std::vector<T> Y, int m, int n )
+void lcs( std::vector<T> X, std::vector<T> Y )
 {
+   int m = X.size();
+   int n = Y.size();
 
    int L[m+1][n+1];
 
@@ -88,14 +91,37 @@ void lcs( std::vector<T> X, std::vector<T> Y, int m, int n )
 }
 
 /* Driver program to test above function */
+// int main()
+// {
+//   std::string  x = "AGGTAB";
+//   std::string y= "GXTXAYB";
+//   std::vector<char> X(x.begin(), x.end());
+//   std::vector<char> Y(y.begin(), y.end());
+//   // ifstream file("file.txt");
+//   lcs<char>(X, Y);
+//   return 0;
+// }
+
 int main()
 {
-  std::string  x = "AGGTAB";
-  std::string y= "GXTXAYB";
-  std::vector<char> X(x.begin(), x.end());
-  std::vector<char> Y(y.begin(), y.end());
-  int m = x.length();
-  int n = y.length();
-  lcs<char>(X, Y, m, n);
+  // std::string  x = "AGGTAB";
+  // std::string y= "GXTXAYB";
+  // std::vector<char> X(x.begin(), x.end());
+  // std::vector<char> Y(y.begin(), y.end());
+  // // ifstream file("file.txt");
+  // lcs<char>(X, Y);
+  // return 0;
+  // std::string textFilePath = "F1";
+  ifstream f1("F1");
+  ifstream f2("F2");
+  std::vector<std::string> F1;
+  std::vector<std::string> F2;
+  for (std::string line; std::getline( f1, line ); /**/ )
+     F1.push_back( line );
+ for (std::string line; std::getline( f2, line ); /**/ )
+    F2.push_back( line );
+  cout << F1 << '\n';
+  cout << F2 << '\n';
+  lcs<string>(F1, F2);
   return 0;
 }
