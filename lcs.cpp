@@ -3,6 +3,7 @@
 #include<fstream>
 #include<cstring>
 #include<cstdlib>
+#include<algorithm>
 using namespace std;
 
 #include <string>
@@ -20,7 +21,7 @@ ostream& operator<<(ostream& os, const vector<T>& v)
 }
 
 template <class T>
-void lcs( std::vector<T> X, std::vector<T> Y )
+std::pair<std::vector<int>,std::vector<T>> lcs( std::vector<T> X, std::vector<T> Y )
 {
    int m = X.size();
    int n = Y.size();
@@ -48,7 +49,7 @@ void lcs( std::vector<T> X, std::vector<T> Y )
    int index = L[m][n];
 
    // Create a character array to store the lcs string
-   vector<T> lcs;;
+   vector<T> lcs, diff;
    // lcs[index] = '\0'; // Set the terminating character
 
    // Start from the right-most-bottom-most corner and
@@ -60,7 +61,6 @@ void lcs( std::vector<T> X, std::vector<T> Y )
       // current character is part of LCS
       if (X[i-1] == Y[j-1])
       {
-        cout << i << j << li << lj << '\n';
           if(li > i) {
             ptch.push_back(-(li-i));
           }
@@ -86,10 +86,50 @@ void lcs( std::vector<T> X, std::vector<T> Y )
    if(lj > 0) ptch.push_back(lj);
 
    // Print the lcs
-   cout << "LCS " << lcs << '\n';
-   cout << "patch" << ptch << '\n';
+   // std::vector<T> a = std::reverse(lcs.begin(),lcs.end())
+
+   std::reverse(ptch.begin(),ptch.end());
+    int fi=0;
+    for(auto const mod: ptch) {
+      if(mod == 0) {
+        fi++;
+      } else if( mod > 0 ){
+        int m = mod;
+        while (m > 0 ) {
+          diff.push_back(Y[fi]);
+          fi++;
+          m--;
+        }
+      }
+    }
+    // std::reverse(lcs.begin(),lcs.end());
+   return std::make_pair(ptch,diff);
+   // cout << "LCS " <<  lcs << '\n';
+   // cout << "patch" << ptch << '\n';
 }
 
+template <class T>
+std::vector<T> patch(std::vector<int> P, std::vector<T> lcs, std::vector<T> F){
+  std::vector<T> patched;
+  int mf = F.size();
+  int j = lcs.size();
+  int iF =0, ilcs = 0;
+  for(auto const& mod: P) {
+    if(mod == 0 ) {
+      patched.push_back(F[iF]);
+      iF++;
+    } else if( mod < 0 ) {
+      iF = iF + (- mod);
+    } else {
+      int numpop = mod;
+      while (numpop > 0) {
+        patched.push_back(lcs[ilcs++]);
+        numpop--;
+      }
+    }
+  }
+  return patched;
+}
 int main()
 {
   // std::string  x = "AGGTAB";
@@ -108,8 +148,12 @@ int main()
      F1.push_back( line );
  for (std::string line; std::getline( f2, line ); /**/ )
     F2.push_back( line );
-  cout << F1 << '\n';
-  cout << F2 << '\n';
-  lcs<string>(F1, F2);
+  cout << "F1 " << F1 << '\n';
+  cout << "F2 " << F2 << '\n';
+  auto res = lcs(F1, F2);
+  // lcs(F1, F2);
+  cout << res.first << '\n';
+  cout << res.second << '\n';
+  cout << "patched " << patch(res.first,res.second,F1) << '\n';
   return 0;
 }
