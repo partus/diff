@@ -25,7 +25,6 @@ std::pair<std::vector<int>,std::vector<T>> lcs( std::vector<T> X, std::vector<T>
 {
    int m = X.size();
    int n = Y.size();
-   cout << "size" << X.size() << Y.size();
    int L[m+1][n+1];
 
    /* Following steps build L[m+1][n+1] in bottom up fashion. Note
@@ -59,7 +58,6 @@ std::pair<std::vector<int>,std::vector<T>> lcs( std::vector<T> X, std::vector<T>
    {
       // If current character in X[] and Y are same, then
       // current character is part of LCS
-      cout << X[i-1] << Y[j-1];
       if (X[i-1] == Y[j-1])
       {
           if(li > i) {
@@ -103,12 +101,6 @@ std::pair<std::vector<int>,std::vector<T>> lcs( std::vector<T> X, std::vector<T>
         }
       }
     }
-    // std::reverse(lcs.begin(),lcs.end());
-    //
-    cout << "print debug" << endl;
-    cout << X<<Y << endl;
-    cout << lcs << endl;
-    cout << ptch << diff << endl;
 
    return std::make_pair(ptch,diff);
    // cout << "LCS " <<  lcs << '\n';
@@ -124,14 +116,14 @@ std::vector<T> patch(std::vector<int> P, std::vector<T> lcs, std::vector<T> F){
   int iF =0, ilcs = 0;
   for(auto const& mod: P) {
     if(mod == 0 ) {
-      patched.push_back(F[iF]);
+      patched.push_back(iF < F.size()? F[iF]: "");
       iF++;
     } else if( mod < 0 ) {
       iF = iF + (- mod);
     } else {
       int numpop = mod;
       while (numpop > 0) {
-        patched.push_back(lcs[ilcs++]);
+        patched.push_back(lcs.size()> ilcs? lcs[ilcs++]: "");
         numpop--;
       }
     }
@@ -209,19 +201,6 @@ void serialize(std::string filename, auto p) {
     f.close();
   }
   else cout << "Unable to open file for output";
-
-
-   //
-   // ss << 100 << ' ' << 200;
-   //
-   // int foo,bar;
-   // ss >> foo >> bar;
-   //
-   // std::cout << "foo: " << foo << '\n';
-   // std::cout << "bar: " << bar << '\n';
-   //
-   // return 0;
-
 }
 
 
@@ -230,17 +209,16 @@ void serialize(std::string filename, auto p) {
 
 int main(int ac, char* av[])
 {
+    po::options_description desc("Allowed options");
     try {
 
-        po::options_description desc("Allowed options");
+
         desc.add_options()
-            ("help", "produce help message")
-            // ("", po::value<int>(), "set compression level")
+            // ("help", "produce help message")
             ("file,F", po::value<std::string>()->required(), "F1 in task")
-            ("patch,P", po::value< vector<string> >(), "patch F by P")
-            ("diff,D", po::value< vector<string> >(), "generate patch F1 -> F2")
+            ("patch,P", po::value< vector<string> >(), "Patch file; output:file2 ")
+            ("diff,D", po::value< vector<string> >(), "second file to generate patch; output:patch")
             ("output,O", po::value<std::string>()->required(), "output file")
-            // ("generate", po::value<std::string>(), "Generate patch F1 -> F2 ")
         ;
 
         po::variables_map vm;
@@ -252,11 +230,6 @@ int main(int ac, char* av[])
             return 1;
         }
 
-        if (vm.count("patch"))
-        {
-            cout << "Include paths are: "
-                 << vm["patch"].as<vector<string>>() << "\n";
-        }
         std::vector<std::string> F1;
         std::vector<std::string> F2;
         if (vm.count("diff"))
@@ -288,6 +261,8 @@ int main(int ac, char* av[])
         }
     }
     catch(exception& e) {
+                  cout << desc << "\n";
+                  cout << "Example:./Diff  -F F1 -D F2  --output P2" << "\n";
         cerr << "error: " << e.what() << "\n";
         return 1;
     }
