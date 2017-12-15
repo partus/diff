@@ -19,12 +19,13 @@ ostream& operator<<(ostream& os, const vector<T>& v)
     return os;
 }
 
+
 template <class T>
 std::pair<std::vector<int>,std::vector<T>> lcs( std::vector<T> X, std::vector<T> Y )
 {
    int m = X.size();
    int n = Y.size();
-
+   cout << "size" << X.size() << Y.size();
    int L[m+1][n+1];
 
    /* Following steps build L[m+1][n+1] in bottom up fashion. Note
@@ -58,6 +59,7 @@ std::pair<std::vector<int>,std::vector<T>> lcs( std::vector<T> X, std::vector<T>
    {
       // If current character in X[] and Y are same, then
       // current character is part of LCS
+      cout << X[i-1] << Y[j-1];
       if (X[i-1] == Y[j-1])
       {
           if(li > i) {
@@ -102,14 +104,17 @@ std::pair<std::vector<int>,std::vector<T>> lcs( std::vector<T> X, std::vector<T>
       }
     }
     // std::reverse(lcs.begin(),lcs.end());
+    //
     cout << "print debug" << endl;
     cout << X<<Y << endl;
     cout << lcs << endl;
     cout << ptch << diff << endl;
+
    return std::make_pair(ptch,diff);
    // cout << "LCS " <<  lcs << '\n';
    // cout << "patch" << ptch << '\n';
 }
+
 
 template <class T>
 std::vector<T> patch(std::vector<int> P, std::vector<T> lcs, std::vector<T> F){
@@ -255,7 +260,7 @@ int main(int ac, char* av[])
            for (std::string line; std::getline( f1, line ); /**/ )
               F1.push_back( line );
           for (std::string line; std::getline( f2, line ); /**/ )
-              F1.push_back( line);
+              F2.push_back( line);
           auto res = lcs(F1, F2);
           serialize(vm["output"].as<string>(), res);
         }
