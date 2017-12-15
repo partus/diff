@@ -1,6 +1,6 @@
 ## Build
 
-cmake
+cmake .
 
 make
 

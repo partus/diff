@@ -5,17 +5,18 @@
 
 #include<iostream>
 #include<fstream>
+#include <sstream>
+
 #include<cstring>
 #include<cstdlib>
 #include<algorithm>
-using namespace std;
 
 #include <string>
 #include <vector>
 
-/* Returns length of LCS for X[0..m-1], Y[0..n-1] */
-
 #include <iterator>
+
+using namespace std;
 
 // for easy output of a vector
 template <class T>
@@ -55,17 +56,16 @@ std::pair<std::vector<int>,std::vector<T>> lcs( std::vector<T> X, std::vector<T>
      }
    }
 
-   // Following code is used to print LCS
+   // vector containing patch logic
    std::vector<int> ptch;
-   // Following code is used to print LCS
+   // num of items in lsc
    int index = L[m][n];
 
-   // Create a character array to store the lcs string
+   // longest common sequence and new lines vectors
    vector<T> lcs, diff;
-   // lcs[index] = '\0'; // Set the terminating character
 
    // Start from the right-most-bottom-most corner and
-   // one by one store characters in lcs[]
+   // one by one store T in lcs[]
    int i = m, j = n,li = i, lj = j;
    while (i > 0 && j > 0)
    {
@@ -97,11 +97,11 @@ std::pair<std::vector<int>,std::vector<T>> lcs( std::vector<T> X, std::vector<T>
    if(li > 0) ptch.push_back(-li);
    if(lj > 0) ptch.push_back(lj);
 
-   // Print the lcs
-   // std::vector<T> a = std::reverse(lcs.begin(),lcs.end())
-
+   // reverse patch as  according to algorithm it starts from the end of file
    std::reverse(ptch.begin(),ptch.end());
     int fi=0;
+
+    //construct diff
     for(auto const mod: ptch) {
       if(mod == 0) {
         fi++;
@@ -116,11 +116,9 @@ std::pair<std::vector<int>,std::vector<T>> lcs( std::vector<T> X, std::vector<T>
     }
 
    return std::make_pair(ptch,diff);
-   // cout << "LCS " <<  lcs << '\n';
-   // cout << "patch" << ptch << '\n';
 }
 
-// applies patch to a file
+// applies patch to a vector storing a file
 // returned vector<T> is a representation of resulting file
 template <class T>
 std::vector<T> patch(std::vector<int> P, std::vector<T> lcs, std::vector<T> F){
@@ -146,17 +144,7 @@ std::vector<T> patch(std::vector<int> P, std::vector<T> lcs, std::vector<T> F){
 }
 
 
-#include <boost/program_options.hpp>
-namespace po = boost::program_options;
-
-#include <iostream>
-#include <iterator>
-#include <string>
-#include <vector>
-using namespace std;
-#include <sstream>
-
-
+// function to load file into vector
 template <class T>
 std::vector<T> fileToVec(std::ifstream f1){
   vector<T> F1;
@@ -168,19 +156,16 @@ std::vector<T> fileToVec(std::ifstream f1){
 //serialses a patch
 // patch format: first line - patch logic, other lines - missing lines
 std::pair<std::vector<int>,std::vector<std::string>> deserialize(ifstream& f) {
-  // std::string str = "1,2,3,4,5,6";
+
   std::string str;
   std::getline(f,str);
   std::vector<int> vect;
-
   std::stringstream ss(str);
 
   int i;
-
   while (ss >> i)
   {
       vect.push_back(i);
-
       if (ss.peek() == ' ')
           ss.ignore();
   }
@@ -220,14 +205,22 @@ void serialize(std::string filename, auto p) {
 }
 
 
+// MAIN FILE
 
+#include <boost/program_options.hpp>
+namespace po = boost::program_options;
+
+#include <iostream>
+#include <iterator>
+#include <string>
+#include <vector>
+using namespace std;
 
 // parses the argumets and binds the logic
 int main(int ac, char* av[])
 {
     po::options_description desc("Allowed options");
     try {
-
 
         desc.add_options()
             // ("help", "produce help message")
@@ -248,10 +241,11 @@ int main(int ac, char* av[])
 
         std::vector<std::string> F1;
         std::vector<std::string> F2;
+        ifstream f1(vm["file"].as<string>());
         if (vm.count("diff"))
         {
           vector<string> fileNames = vm["diff"].as< vector<string> >();
-           ifstream f1(vm["file"].as<string>());
+
            ifstream f2(fileNames[0]);
 
 
@@ -264,9 +258,7 @@ int main(int ac, char* av[])
 
         } else if (vm.count("patch")) {
           vector<string> fileNames = vm["patch"].as< vector<string> >();
-           ifstream f1(vm["file"].as<string>());
            ifstream pfile(fileNames[0]);
-           // ifstream f2(fileNames[0]);
 
            for (std::string line; std::getline( f1, line ); /**/ )
               F1.push_back( line );
