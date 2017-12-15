@@ -1,3 +1,8 @@
+// Utility to generate and apply patches
+// patches are generated based on longest common sequence
+// Some parts of code is annotated with comments
+
+
 #include<iostream>
 #include<fstream>
 #include<cstring>
@@ -12,6 +17,7 @@ using namespace std;
 
 #include <iterator>
 
+// for easy output of a vector
 template <class T>
 ostream& operator<<(ostream& os, const vector<T>& v)
 {
@@ -20,6 +26,13 @@ ostream& operator<<(ostream& os, const vector<T>& v)
 }
 
 
+// This function contains the algorithm
+// First vector<int> is contains logic for patching
+// i==0: lines are the same in both lines
+// i< 0 : i lines deleted
+// i > 0 : n new lines
+// second vector contains strings of lines to add
+// complexity: O(mn)
 template <class T>
 std::pair<std::vector<int>,std::vector<T>> lcs( std::vector<T> X, std::vector<T> Y )
 {
@@ -107,7 +120,8 @@ std::pair<std::vector<int>,std::vector<T>> lcs( std::vector<T> X, std::vector<T>
    // cout << "patch" << ptch << '\n';
 }
 
-
+// applies patch to a file
+// returned vector<T> is a representation of resulting file
 template <class T>
 std::vector<T> patch(std::vector<int> P, std::vector<T> lcs, std::vector<T> F){
   std::vector<T> patched;
@@ -151,6 +165,8 @@ std::vector<T> fileToVec(std::ifstream f1){
   return F1;
 }
 
+//serialses a patch
+// patch format: first line - patch logic, other lines - missing lines
 std::pair<std::vector<int>,std::vector<std::string>> deserialize(ifstream& f) {
   // std::string str = "1,2,3,4,5,6";
   std::string str;
@@ -206,7 +222,7 @@ void serialize(std::string filename, auto p) {
 
 
 
-
+// parses the argumets and binds the logic
 int main(int ac, char* av[])
 {
     po::options_description desc("Allowed options");
