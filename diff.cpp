@@ -159,7 +159,7 @@ std::vector<T> fileToVec(std::ifstream f1){
   return F1;
 }
 
-std::pair<std::vector<int>,std::vector<std::string>> deserialize(ifstream f) {
+std::pair<std::vector<int>,std::vector<std::string>> deserialize(ifstream& f) {
   // std::string str = "1,2,3,4,5,6";
   std::string str;
   std::getline(f,str);
@@ -276,12 +276,12 @@ int main(int ac, char* av[])
         } else if (vm.count("patch")) {
           vector<string> fileNames = vm["patch"].as< vector<string> >();
            ifstream f1(vm["file"].as<string>());
-           ifstream pfile(vm["patch"].as<string>()[0]);
+           ifstream pfile(fileNames[0]);
            // ifstream f2(fileNames[0]);
 
            for (std::string line; std::getline( f1, line ); /**/ )
               F1.push_back( line );
-          auto des = deserialize(f1);
+          auto des = deserialize(pfile);
           auto F2 = patch(des.first, des.second,F1);
 
           writeVec(vm["output"].as<string>(), F2);
