@@ -159,7 +159,7 @@ std::vector<T> fileToVec(std::ifstream f1){
   return F1;
 }
 
-auto deserialize(auto f) {
+std::pair<std::vector<int>,std::vector<std::string>> deserialize(ifstream f) {
   // std::string str = "1,2,3,4,5,6";
   std::string str;
   std::getline(f,str);
@@ -180,6 +180,18 @@ auto deserialize(auto f) {
   for (std::string line; std::getline( f, line ); /**/ )
      F1.push_back( line );
   return std::make_pair(vect,F1);
+}
+
+void writeVec(std::string filename, auto v){
+  ofstream f (filename);
+  if (f.is_open())
+  {
+    for(auto mod:v) {
+        f << mod << std::endl;
+    };
+    f.close();
+  }
+  else cout << "Unable to open file for output";
 }
 
 void serialize(std::string filename, auto p) {
@@ -245,17 +257,14 @@ int main(int ac, char* av[])
             cout << "Include paths are: "
                  << vm["patch"].as<vector<string>>() << "\n";
         }
-
+        std::vector<std::string> F1;
+        std::vector<std::string> F2;
         if (vm.count("diff"))
         {
           vector<string> fileNames = vm["diff"].as< vector<string> >();
-            cout << "Input files are: "
-                 << fileNames[0] << "\n";
            ifstream f1(vm["file"].as<string>());
-           cout << "F0 " << fileNames[0];
            ifstream f2(fileNames[0]);
-           std::vector<std::string> F1;
-           std::vector<std::string> F2;
+
 
            for (std::string line; std::getline( f1, line ); /**/ )
               F1.push_back( line );
@@ -263,6 +272,19 @@ int main(int ac, char* av[])
               F2.push_back( line);
           auto res = lcs(F1, F2);
           serialize(vm["output"].as<string>(), res);
+
+        } else if (vm.count("patch")) {
+          vector<string> fileNames = vm["patch"].as< vector<string> >();
+           ifstream f1(vm["file"].as<string>());
+           ifstream pfile(vm["patch"].as<string>()[0]);
+           // ifstream f2(fileNames[0]);
+
+           for (std::string line; std::getline( f1, line ); /**/ )
+              F1.push_back( line );
+          auto des = deserialize(f1);
+          auto F2 = patch(des.first, des.second,F1);
+
+          writeVec(vm["output"].as<string>(), F2);
         }
     }
     catch(exception& e) {
